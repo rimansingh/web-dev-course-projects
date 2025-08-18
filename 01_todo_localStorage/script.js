@@ -25,32 +25,49 @@ document.addEventListener('DOMContentLoaded', () =>{
         console.log(tasks)
     })
 
-    function renderTask(task){
-        const li = document.createElement('li')
-
-        if(task.completed) li.classList.add("completed");
-
-        li.setAttribute('data-id', task.id)
-        li.innerHTML = `
-            <span>${task.text}</span>
-            <button class="delete-btn">Delete</button>
-        `;
-
-        li.addEventListener('click', (e) => {
-            if(e.target.tagName === 'BUTTON') return;
-            task.completed = !task.completed
-            li.classList.toggle('completed')
-            saveTasks()
+    function renderTask(task) {
+        // Create a new list item for the task
+        const li = document.createElement('li');
+    
+        // If the task is completed, add a special class for styling
+        if (task.completed) {
+            li.classList.add("completed");
+        }
+    
+        // Set a unique identifier for the task (not strictly needed for this simple version)
+        li.setAttribute('data-id', task.id);
+    
+        // Create a span to show the task text
+        const span = document.createElement('span');
+        span.textContent = task.text;
+    
+        // Create a delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = "Delete";
+        deleteBtn.className = "delete-btn";
+    
+        // When you click the task (not the button), toggle completed status
+        li.addEventListener('click', function(e) {
+            if (e.target === deleteBtn) return; // Don't toggle if delete button is clicked
+            task.completed = !task.completed;
+            li.classList.toggle('completed');
+            saveTask();
         });
-
-        li.querySelector('button').addEventListener('click', (e) => {
-            e.stopPropagation()
-            tasks = tasks.filter(t => t.id != task.id)
-            li.remove()
-            saveTask()
-        })
-
-        todoList.appendChild(li)
+    
+        // When you click the delete button, remove the task
+        deleteBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the li click event
+            tasks = tasks.filter(t => t.id !== task.id);
+            li.remove();
+            saveTask();
+        });
+    
+        // Add the text and button to the list item
+        li.appendChild(span);
+        li.appendChild(deleteBtn);
+    
+        // Add the list item to the todo list
+        todoList.appendChild(li);
     }
 
     function saveTask(){

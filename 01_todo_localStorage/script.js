@@ -1,41 +1,59 @@
-// Wait for the DOM to fully load before running the script
 document.addEventListener('DOMContentLoaded', () =>{
-    // Get references to DOM elements
     const todoInput = document.getElementById("todo-input")
     const addTaskbutton = document.getElementById("add-task-btn")
     const todoList = document.getElementById("todo-list")
 
-    // Retrieve tasks from localStorage or initialize as empty array
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-    // Render all tasks from localStorage on page load
     tasks.forEach(task => renderTask(task));
 
-    // Add event listener for the Add Task button
     addTaskbutton.addEventListener('click', () =>{
-        const taskText = todoInput.value.trim() // Get and trim input value
-        if(taskText === "") // Prevent adding empty tasks
+        const taskText = todoInput.value.trim()
+        if(taskText === "")
             return;
 
         const newTask = {
-            id: Date.now(), // Unique ID based on timestamp
-            text: taskText, // Task description
-            completed: false // Task completion status
+            id: Date.now(),
+            text: taskText,
+            completed: false
         }
 
-        tasks.push(newTask) // Add new task to the array
-        saveTask() // Save updated tasks to localStorage
-        todoInput.value = "" // Clear input field
-        console.log(tasks) // Debug: log current tasks
+        tasks.push(newTask)
+        saveTask()
+        renderTask(newTask);
+        todoInput.value = ""
+        console.log(tasks)
     })
 
     function renderTask(task){
-        // TODO: Implement rendering logic for displaying a task in the DOM
-        console.log(task) // Debug: log task being rendered
+        const li = document.createElement('li')
+
+        if(task.completed) li.classList.add("completed");
+
+        li.setAttribute('data-id', task.id)
+        li.innerHTML = `
+            <span>${task.text}</span>
+            <button class="delete-btn">Delete</button>
+        `;
+
+        li.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON') return;
+            task.completed = !task.completed
+            li.classList.toggle('completed')
+            saveTasks()
+        });
+
+        li.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation()
+            tasks = tasks.filter(t => t.id != task.id)
+            li.remove()
+            saveTask()
+        })
+
+        todoList.appendChild(li)
     }
 
     function saveTask(){
-        // Save the current tasks array to localStorage
         localStorage.setItem('tasks', JSON.stringify(tasks))
     }
 })

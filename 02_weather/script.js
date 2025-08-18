@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         weatherInfo.classList.remove('hidden')
         errorMessage.classList.add('hidden')
         temperatureDisplay.textContent = `Temperature : ${main.temp}°c`
-        descriptionDisplay.innerHTML = `Weather : ${weather[0].description} <i class=\"wi ${iconClass}\" style=\"font-size: 40px; vertical-align: middle;\"></i>`;
+        descriptionDisplay.innerHTML = `Weather : ${weather[0].description} <i class="wi ${iconClass}" style="font-size: 40px; vertical-align: middle;"></i>`;
     }
 
     function showError(){
